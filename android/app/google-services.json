@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "712731743934",
+    "project_id": "reclamo-ciudadano-3e85d",
+    "storage_bucket": "reclamo-ciudadano-3e85d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:712731743934:android:1a94466b05f62918cf70ef",
+        "android_client_info": {
+          "package_name": "com.example.sprint_1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "712731743934-uejbg8r3i6ucr2rrcqn85omh6ldqq35c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkwP3jnFn_SbQH3nCG8g6LWwLmYgmS1H0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "712731743934-uejbg8r3i6ucr2rrcqn85omh6ldqq35c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

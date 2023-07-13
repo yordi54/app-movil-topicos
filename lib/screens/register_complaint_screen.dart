@@ -92,6 +92,7 @@ class RegisterComplaintScreenState extends State<RegisterComplaintScreen> {
     try {
       position = await _determinePosition();
     } catch (e) {
+      // ignore: avoid_print
       print(e);
     }
   }
@@ -140,13 +141,16 @@ class RegisterComplaintScreenState extends State<RegisterComplaintScreen> {
     
     if (response['ok']){
 
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Denuncia registrada'),
         ),
       );
+      // ignore: use_build_context_synchronously
       Navigator.pop(context, true);
     }else {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Error al registrar denuncia'),

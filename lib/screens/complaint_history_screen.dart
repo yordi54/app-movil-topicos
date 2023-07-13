@@ -216,6 +216,7 @@ class ComplaintHistoryScreenState extends State<ComplaintHistoryScreen> {
                                   selectedFilter = filterComplaint;
                                   selectedOpciones = filterOpciones;
                                 });
+                                // ignore: use_build_context_synchronously
                                 Navigator.pop(context);
                                 
                               }, 
@@ -333,6 +334,7 @@ class ComplaintHistoryScreenState extends State<ComplaintHistoryScreen> {
                                             await complaintHistoryProvider.deleteComplaintHistory(data[index].getId);
                                             complaintHistoryProvider.setComplaintHistoryList = [];
                                             await complaintHistoryProvider.getComplaintHistoryList(authProvider.usuario.getId, filterComplaint, filterOpciones);
+                                            // ignore: use_build_context_synchronously
                                             Navigator.pop(context);
                                             setState(() {
                                               data = complaintHistoryProvider.complaintHistoryList;

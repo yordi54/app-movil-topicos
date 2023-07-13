@@ -9,6 +9,7 @@ class ComplaintHistoryProvider extends ChangeNotifier {
   set setComplaintHistoryList(List<ComplaintHistoryModel> complaintHistoryList) => _complaintHistoryList = complaintHistoryList;
 
   Future<void> getComplaintHistoryList(String id, String selected, String options) async {
+    // ignore: prefer_typing_uninitialized_variables
     final response;
     if( selected == 'estado'){
       response = await complaintHistoryService.getComplaintHistoryByState(id, options);

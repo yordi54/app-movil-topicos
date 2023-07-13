@@ -86,9 +86,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               },
                             ),
                           ),
-                          onPressed: () async  {
+                          onPressed: () {
                             if(form.valid){
-                              await login(context);
+                              login(context);
                             }else{
                               return ;
                             }
@@ -123,17 +123,19 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   /* funciones auxiliares */
-  login(BuildContext context)  async {
+  login(BuildContext context) async {
     String email = formLogin.control('email').value;
     String password = formLogin.control('password').value;
     /* implementar */
-    await authProvider.login(email, password);
+    final result = await authProvider.login(email, password);
 
-    if(authProvider.isAuth){
+    if(result){
       //almacenar las localstorage
+      // ignore: use_build_context_synchronously
       Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
     }else {
       /* mostrar error */
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Usuario o contraseña incorrectos'),

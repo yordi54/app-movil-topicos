@@ -2,14 +2,14 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:sprint_1/models/complaint_history_model.dart';
 class ComplaintHistoryService {
-  String baseUrl = 'http://172.28.208.1:3000/api/denunciation';
+  String baseUrl = 'http://192.168.0.8:3000/api/denunciation';
 
   Future<Map<String, dynamic>> getComplaintHistory(String id) async {
     Map<String, dynamic> data = {};
     try {
       String paramsUrl = "$baseUrl/$id";
       final response = await http.get(
-        Uri.parse(paramsUrl).replace(queryParameters: {'limit': '10', 'offset': '10'}),
+        Uri.parse(paramsUrl).replace(queryParameters: {'limit': '20', 'offset': '0'}),
       );
 
       if(response.statusCode == 200){

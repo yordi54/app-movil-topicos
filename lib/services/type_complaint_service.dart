@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 class TypeComplaintService {
-  String baseUrl = "http://172.28.208.1:3000/api/type-denunciation";
+  String baseUrl = "http://192.168.0.8:3000/api/type-denunciation";
 
   Future<Map<String, dynamic>> getTypeComplaints() async {
     Map<String, dynamic> data = {};

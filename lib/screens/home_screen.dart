@@ -1,9 +1,53 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:sprint_1/providers/auth_provider.dart';
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
-  static const String routeName = '/home';
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late Position position;
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled;
+      LocationPermission permission;
+      serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        return Future.error('Location services are disabled.');
+      }
+      permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          return Future.error('Location permissions are denied');
+        }
+      }
+      if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately. 
+        return Future.error(
+        'Location permissions are permanently denied, we cannot request permissions.');
+      } 
+      
+    return await Geolocator.getCurrentPosition();
+  }
+  
+  void getCurrentLocation() async {
+    try {
+      position = await _determinePosition();
+    } catch (e) {
+      exit(0);
+    }
+  }
+  @override
+  void initState() {
+    super.initState();
+    getCurrentLocation();
+  }
   @override
   Widget build(BuildContext context) {
     //provider
@@ -20,6 +64,7 @@ class HomeScreen extends StatelessWidget {
             onPressed: () async{
               if(authProvider.isAuth){
                 await authProvider.logout();
+                // ignore: use_build_context_synchronously
                 Navigator.pushNamed(context, '/login');
               }
             },

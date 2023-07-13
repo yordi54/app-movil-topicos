@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/stepper_widget.dart';
+
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({Key? key}) : super(key: key);
   
@@ -9,7 +11,7 @@ class RegisterScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Registro"),
       ),
-      body: const Placeholder(),
+      body: StepperWidget(context: context),
     );
   }
   

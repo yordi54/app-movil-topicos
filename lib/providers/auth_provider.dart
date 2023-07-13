@@ -10,26 +10,24 @@ class AuthProvider with ChangeNotifier{
   UsuarioModel  get usuario => _usuario;
   bool get isAuth => _isAuth;
 
-  Future<void> login(String email , String password) async{
+  Future<bool> login(String email , String password) async{
     final response = await authService.login(email, password);
     if(response['ok']){
-      _isAuth = true;
       _usuario = UsuarioModel.toMap(response['usuario']);
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString('id', _usuario.getId );
       prefs.setString('password', email );
       prefs.setString('email', password );
-
-      notifyListeners();
+      return true;
     } else {
-      _isAuth = false;
       _usuario = UsuarioModel.empty();
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.remove('id');
-      prefs.remove('password');
-      prefs.remove('email');
-      /* mostrar error */  
-      notifyListeners();
+      if(prefs.containsKey('id')){
+        prefs.remove('id');
+        prefs.remove('password');
+        prefs.remove('email');
+      }
+      return false;
     }
   }
 
@@ -38,4 +36,7 @@ class AuthProvider with ChangeNotifier{
    
     notifyListeners();
   }
+
+ 
+
 }

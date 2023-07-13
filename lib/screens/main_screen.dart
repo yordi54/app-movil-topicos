@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sprint_1/screens/home_screen.dart';
 import 'complaint_history_screen.dart';
+import 'notifications.screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -11,7 +12,8 @@ class MainScreenState extends State<MainScreen> {
   int selectedIndex = 0;
   static List<Widget> pages = <Widget>[
       const HomeScreen(),
-      const ComplaintHistoryScreen()
+      const ComplaintHistoryScreen(),
+      const NotificationScreen(),
     ];
   @override
   Widget build(BuildContext context) {
@@ -38,6 +40,10 @@ class MainScreenState extends State<MainScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.history),
             label: 'Historial',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications),
+            label: 'Notificaciones',
           ),
         ],
       ),

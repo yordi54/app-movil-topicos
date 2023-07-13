@@ -13,12 +13,18 @@ class AuthProvider with ChangeNotifier{
   Future<bool> login(String email , String password) async{
     final response = await authService.login(email, password);
     if(response['ok']){
-      _usuario = UsuarioModel.toMap(response['usuario']);
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString('id', _usuario.getId );
-      prefs.setString('password', email );
-      prefs.setString('email', password );
-      return true;
+      if(response['usuario']['active'] != false){
+         _usuario = UsuarioModel.toMap(response['usuario']);
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString('id', _usuario.getId );
+        prefs.setString('password', email );
+        prefs.setString('email', password );
+        prefs.setString('active', _usuario.getActive.toString());
+        return true;
+      }else{
+        return false;
+      }
+     
     } else {
       _usuario = UsuarioModel.empty();
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -26,10 +32,43 @@ class AuthProvider with ChangeNotifier{
         prefs.remove('id');
         prefs.remove('password');
         prefs.remove('email');
+
       }
       return false;
     }
+    
   }
+
+  Future<bool> validateEmail(String token) async {
+    // ignore: unused_local_variable
+    final response = await authService.validateEmail(token);
+    if(response['ok']){
+      _usuario.setActive = response['usuario']['active'];
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('active', _usuario.getActive.toString());
+      notifyListeners();
+      return true;
+    } 
+    return false;
+  }
+
+  Future<bool> register(UsuarioModel usuario) async {
+
+    final response = await authService.register(usuario);
+    if(response['ok']){
+      _usuario = UsuarioModel.toMap(response['usuario']);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('id', _usuario.getId );
+      prefs.setString('password', usuario.getContrasenia );
+      prefs.setString('email', usuario.getCorreo );
+      prefs.setString('active', _usuario.getActive.toString());
+      return true;
+    } else{
+      _usuario = UsuarioModel.empty();
+      return false;
+    }
+  }
+
 
   Future<void> logout() async{
     _isAuth = false;

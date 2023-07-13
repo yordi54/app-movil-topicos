@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sprint_1/providers/auth_provider.dart';
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -62,8 +63,12 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: <Widget>[
            IconButton(
             onPressed: () async{
-              if(authProvider.isAuth){
-                await authProvider.logout();
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              if(prefs.containsKey('id')){
+                prefs.remove('id');
+                prefs.remove('password');
+                prefs.remove('email');
+                
                 // ignore: use_build_context_synchronously
                 Navigator.pushNamed(context, '/login');
               }

@@ -21,6 +21,7 @@ class RegisterComplaintScreen extends StatefulWidget {
 
 class RegisterComplaintScreenState extends State<RegisterComplaintScreen> {
   final formRegisterComplaint = FormGroup({
+    'title': FormControl<String>(validators: [Validators.required]),
     'descripcion': FormControl<String>(validators: [Validators.required, Validators.minLength(64), Validators.maxLength(512)]),
     'tipoDenuncia': FormControl<String>(validators: [Validators.required]),
     'images': FormControl<List<String>>(validators: [Validators.required]),
@@ -126,6 +127,7 @@ class RegisterComplaintScreenState extends State<RegisterComplaintScreen> {
     AuthProvider authProvider = Provider.of<AuthProvider>(context, listen: false);
     
     ComplaintHistoryModel complaintHistoryModel = ComplaintHistoryModel.register(
+      title: formRegisterComplaint.control('title').value,
       descripcion: formRegisterComplaint.control('descripcion').value,
       typeDenunciation: {
         "id": int.parse(formRegisterComplaint.control('tipoDenuncia').value)
@@ -191,6 +193,22 @@ class RegisterComplaintScreenState extends State<RegisterComplaintScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    ReactiveTextField(
+                      keyboardType: TextInputType.text,
+                      formControlName: 'title',
+                      onChanged: (control) {
+                        
+                      },
+                      validationMessages: {
+                        'required': (error) => 'Este campo es requerido',
+                      },
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Descripción',
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                      ),
+                    ),
+                    const SizedBox(height: 20.0),
                     ReactiveTextField(
                       keyboardType: TextInputType.text,
                       formControlName: 'descripcion',

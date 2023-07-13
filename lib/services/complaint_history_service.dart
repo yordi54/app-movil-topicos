@@ -83,6 +83,7 @@ class ComplaintHistoryService {
           'Accept': 'application/json',
         },
         body: jsonEncode({
+          'title': complaintHistoryModel.getTitle,
           'description': complaintHistoryModel.getDescripcion,
           'location': complaintHistoryModel.getUbicacion,
           'neighbor_id': complaintHistoryModel.getNeighbor['id'],

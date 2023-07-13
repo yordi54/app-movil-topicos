@@ -251,7 +251,7 @@ class ComplaintHistoryScreenState extends State<ComplaintHistoryScreen> {
       itemBuilder: (context, index){
         //vista de una denuncia
         return Container(
-          height: 200,
+          height: 250,
           margin: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
           padding: const EdgeInsets.all(10.0),
           decoration: BoxDecoration(
@@ -288,7 +288,7 @@ class ComplaintHistoryScreenState extends State<ComplaintHistoryScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Text('Denuncia $index', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0)),
+                        Text(data[index].getTitle, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14.0)),
                         const SizedBox(height: 5.0),
                         Text('Tipo:${data[index].getTypeDenunciation['name']}'),
                         const SizedBox(height: 5.0),

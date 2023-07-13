@@ -62,7 +62,7 @@ class CameraScreenState extends State<CameraScreen>{
     cameras = await availableCameras();
     if(cameras.isNotEmpty){
       setState(() {
-        _controller = CameraController(cameras[0], ResolutionPreset.max, enableAudio: false,imageFormatGroup: ImageFormatGroup.jpeg);
+        _controller = CameraController(cameras[0], ResolutionPreset.veryHigh, enableAudio: false,imageFormatGroup: ImageFormatGroup.jpeg);
         _controller!.initialize().then((_){
           if(!mounted){
             return;

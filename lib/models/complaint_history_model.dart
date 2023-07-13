@@ -2,6 +2,7 @@ import 'package:sprint_1/models/images_complait_model.dart';
 
 class ComplaintHistoryModel {
   int  _id;
+  String _title;
   String _descripcion;
   String _fecha;
   String _estado;
@@ -12,6 +13,7 @@ class ComplaintHistoryModel {
 
   ComplaintHistoryModel({
     required int id,
+    required String title,
     required String descripcion,
     required String fecha,
     required String estado,
@@ -22,6 +24,7 @@ class ComplaintHistoryModel {
 
   }):
     _id = id,
+    _title = title,
     _descripcion = descripcion,
     _fecha = fecha,
     _estado = estado,
@@ -31,6 +34,7 @@ class ComplaintHistoryModel {
     _typeDenunciation = typeDenunciation;
 
   int get getId => _id;
+  String get getTitle => _title;
   String get getDescripcion => _descripcion;
   String get getFecha => _fecha;
   String get getEstado => _estado;
@@ -40,6 +44,7 @@ class ComplaintHistoryModel {
   Map<String, dynamic> get getNeighbor => _neighbor;
 
   set setId(int id) => _id = id;
+  set setTitle(String title) => _title = title;
   set setDescripcion(String descripcion) => _descripcion = descripcion;
   set setFecha(String fecha) => _fecha = fecha;
   set setEstado(String estado) => _estado = estado;
@@ -50,6 +55,7 @@ class ComplaintHistoryModel {
 
   factory ComplaintHistoryModel.toMap(Map<String, dynamic> json) => ComplaintHistoryModel(
     id: json['id'],
+    title: json['title'],
     descripcion: json['description'],
     fecha: json['creation_date'],
     estado: json['status'],
@@ -62,6 +68,7 @@ class ComplaintHistoryModel {
   /* contructor empty */
   factory ComplaintHistoryModel.empty() => ComplaintHistoryModel(
     id: 0,
+    title: '',
     descripcion: '',
     fecha: '',
     estado: '',
@@ -73,6 +80,7 @@ class ComplaintHistoryModel {
 
   Map<String, dynamic> toJson() => {
     'id': _id,
+    'title': _title,
     'description': _descripcion,
     'creation_date': _fecha,
     'status': _estado,
@@ -88,8 +96,9 @@ class ComplaintHistoryModel {
     return '${fechaSplit2[2]}/${fechaSplit2[1]}/${fechaSplit2[0]}';
   }
 
-  factory ComplaintHistoryModel.register ({required Map<String, dynamic> typeDenunciation,required Map<String, dynamic> neighbor,required String  descripcion, required List<ImagesComplaintModel> fotos, required String ubicacion}) => ComplaintHistoryModel(
+  factory ComplaintHistoryModel.register ({required String title,required Map<String, dynamic> typeDenunciation,required Map<String, dynamic> neighbor,required String  descripcion, required List<ImagesComplaintModel> fotos, required String ubicacion}) => ComplaintHistoryModel(
     id: 0,
+    title: title,
     descripcion: descripcion,
     fecha: '',
     estado: '',

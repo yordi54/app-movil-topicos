@@ -3,12 +3,13 @@ import 'dart:io';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sprint_1/models/usuario_model.dart';
+import 'package:sprint_1/providers/auth_provider.dart';
 import 'package:sprint_1/widgets/stteper_controller.dart';
 
 import '../providers/biometric_provider.dart';
 import '../screens/camera_screen.dart';
 import '../screens/login_screen.dart';
-import '../screens/verifcation_email.dart';
 import '../services/rappid_api_service.dart';
 
 class StepperWidget extends StatefulWidget {
@@ -21,9 +22,12 @@ class StepperWidget extends StatefulWidget {
 }
 
 class StepperWidgetState extends State<StepperWidget>{
+  List<TextEditingController> controllers = [];
+  List<FocusNode> focusNodes = [];
   late StepperController stepperController;
   late GlobalKey<FormState> formCI;
   late BiometricProvider biometricProvider;
+  late AuthProvider authProvider;
   bool isloading = false;
   final registerForm = FormGroup( {
     'verificar-ci': FormGroup({
@@ -42,15 +46,23 @@ class StepperWidgetState extends State<StepperWidget>{
   @override
   void initState(){
     super.initState();
+    for (int i = 0; i < 4; i++) {
+      controllers.add(TextEditingController());
+      focusNodes.add(FocusNode());
+    }
     stepperController = StepperController();
     formCI = GlobalKey<FormState>();
     biometricProvider = Provider.of<BiometricProvider>(context, listen: false);
-
+    authProvider = Provider.of<AuthProvider>(context, listen: false);
   }
 
   @override
   void dispose(){
     stepperController.dispose();
+    for (int i = 0; i < 4; i++) {
+      controllers[i].dispose();
+      focusNodes[i].dispose();
+    }
     super.dispose();
   }
 
@@ -194,7 +206,10 @@ class StepperWidgetState extends State<StepperWidget>{
                 children: [
                   const SizedBox(width: 16.0), // Espacio entre los botones
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      stepperController.dispose();
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+                    },
                     child: const Text('Cancelar'),
                   ),
                 ],
@@ -225,7 +240,6 @@ class StepperWidgetState extends State<StepperWidget>{
                 ReactiveTextField(
                   key: const ValueKey('nombre_register'),
                   formControlName: 'datos-personales.nombre',
-                  enableInteractiveSelection: false,
                   keyboardType: TextInputType.text,
                   decoration: InputDecoration(
                     labelText: 'Nombre',
@@ -239,7 +253,6 @@ class StepperWidgetState extends State<StepperWidget>{
                 ReactiveTextField(
                   key: const ValueKey('apellido_register'),
                   formControlName: 'datos-personales.apellido',
-                  enableInteractiveSelection: false,
                   keyboardType: TextInputType.text,
                   decoration: InputDecoration(
                     labelText: 'Apellido',
@@ -253,7 +266,6 @@ class StepperWidgetState extends State<StepperWidget>{
                 ReactiveTextField(
                   key: const ValueKey('ci_register'),
                   formControlName: 'datos-personales.ci',
-                  enableInteractiveSelection: false,
                   keyboardType: TextInputType.text,
                   decoration: InputDecoration(
                     labelText: 'Carnet de Identidad',
@@ -307,7 +319,7 @@ class StepperWidgetState extends State<StepperWidget>{
                   key: const ValueKey('correo_register'),
                   formControlName: 'datos-personales.correo',
                   enableInteractiveSelection: false,
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.text,
                   decoration: InputDecoration(
                     labelText: 'Correo Electronico',
                     prefixIcon: const Icon(Icons.email),
@@ -341,12 +353,33 @@ class StepperWidgetState extends State<StepperWidget>{
                 ),
 
                 const SizedBox(height: 40.0),
-                ElevatedButton(onPressed: ()=>{
-                  setState(() {
-                    stepperController.next();
-                  })
-                },
-                child: const Text('Confirmar'))
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ReactiveFormConsumer(
+                      builder: (context, form, child) {
+                        return ElevatedButton(
+                          onPressed: () {
+                              register();
+                           
+                          },
+                          child: const Text(
+                            'Registrar',
+                            
+                          ),
+                        );
+                      },
+                    ),
+                  const SizedBox(width: 16.0), // Espacio entre los botones
+                  ElevatedButton(
+                    onPressed: () {
+                      stepperController.dispose();
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+                    },
+                    child: const Text('Cancelar'),
+                  ),
+                ],
+              ),
               ]
             )
           )
@@ -368,41 +401,77 @@ class StepperWidgetState extends State<StepperWidget>{
                 ),
               ),
             ),
-            const VerificationView(),
-            ElevatedButton(
-              onPressed: () async {
-                /* if(userProvider.correo.isNotEmpty && userProvider.contrasenia.isNotEmpty){
-                  AuthService  authService = AuthService();
-                  final response = await authService.registerUsuario(userProvider.usuario);
-                  if(response['message'] == null){
-                    //guardar credenciales de acceso
-                    SharedPreferences prefs = await SharedPreferences.getInstance();
-                    prefs.setString('correo', userProvider.correo);
-                    prefs.setString('contrasenia', userProvider.contrasenia);
-                    prefs.setString('token', response['token']);
-                    Navigator.push(context, MaterialPageRoute(builder: (context) =>  const LoginScreen()));
-                    
-                    
-                  }else{
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('El correo ya esta registrado'),
-                        duration: Duration(seconds: 2),
-                      )
-                    );
-                  }
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Debe llenar todos los campos'),
-                      duration: Duration(seconds: 2),
-                    )
-                  );
-                } */
-              }, 
-              child: const Text('Confirmar')
-            )
+            const SizedBox(height: 40.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                for (int i = 0; i < 4; i++)
+                  Container(
+                    width: 40,
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    child: TextField(
+                      controller: controllers[i],
+                      maxLength: 1,
+                      textAlign: TextAlign.center,
+                      keyboardType: TextInputType.number,
+                      style: const TextStyle(fontSize: 20),
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.all(8),
+                      ),
+                      focusNode: focusNodes[i],
+                      onChanged: (value) {
+                        _handleTextChanged(i, value);
+                      },
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 40.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ElevatedButton(
+                  onPressed: () async {         
+                    var token = '';
+                    for (int i = 0; i < 4; i++){
+                      token = token + controllers[i].text;
+                    }
+                    final response = await authProvider.validateEmail(token);
+                    if(response){
+                      // ignore: use_build_context_synchronously
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('El correo se verifico correctamente'),
+                          duration: Duration(seconds: 2),
+                        )
+                      );
+                      stepperController.dispose();
+                      // ignore: use_build_context_synchronously
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+                    }else{
+                      // ignore: use_build_context_synchronously
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('El correo no se pudo verificar'),
+                          duration: Duration(seconds: 2),
+                        )
+                      );
+                    }
+                  }, 
+                  child: const Text('Confirmar')
+                ),
+                const SizedBox(width: 10.0), // Espacio entre los botones
+                ElevatedButton(
+                    onPressed: () {
+                      stepperController.dispose();
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+                    },
+                    child: const Text('Cancelar'),
+                  ),
 
+              ],
+            ),
           ],
 
         )
@@ -436,6 +505,41 @@ class StepperWidgetState extends State<StepperWidget>{
       );
     }
 
+  }
+
+  Future<void> register() async {
+    final form = registerForm.control('datos-personales');
+    UsuarioModel usuario = UsuarioModel(
+      id: '',
+      nombre: biometricProvider.getUserBiometric.getNombre,
+      apellido: biometricProvider.getUserBiometric.getApellido,
+      ci: biometricProvider.getUserBiometric.getCi,
+      direccion: form.value['direccion'],
+      telefono: form.value['telefono'],
+      correo: form.value['correo'],
+      contrasenia: form.value['contrasenia'],
+      foto: biometricProvider.getUserBiometric.getFoto,
+      token: '',
+      activationToken: '',
+      active: false
+    );
+    // ignore: unused_local_variable
+    final response = await authProvider.register(usuario);
+    if(response){
+      // ignore: use_build_context_synchronously
+      setState(() {
+        stepperController.next();
+      });
+
+    }else{
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No se pudo registrar el usuario'),
+          duration: Duration(seconds: 2),
+        )
+      );
+    }
   }
 
   void _navigatorToCamera() async{
@@ -487,4 +591,11 @@ class StepperWidgetState extends State<StepperWidget>{
       } 
     }
   } 
+
+  void _handleTextChanged(int index, String value) {
+    if (value.length == 1 && index < 3) {
+      // Cuando se ingresa un carácter y no es el último campo, pasa al siguiente
+      FocusScope.of(context).requestFocus(focusNodes[index + 1]);
+    }
+  }
 }

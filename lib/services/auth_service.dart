@@ -48,7 +48,7 @@ class AuthService{
           'telefono': usuarioModel.getTelefono,
           'direccion': usuarioModel.getDireccion,
           'ci': usuarioModel.getCi,
-          'foto': usuarioModel.getFoto
+          'foto': ''
         },
       ).timeout(const Duration(seconds: 30));
       if (response.statusCode == 200) {
@@ -57,13 +57,39 @@ class AuthService{
           'message': 'Usuario registrado',
           'usuario': jsonDecode(response.body)
         };
-      } else {
+      }else if(response.statusCode == 404){
+        throw Exception('Usuario no encontrado');
+      }else{
         throw Exception('Error desconocido');
       }
     } catch (e) {
       if (e is Exception) {
         data = {'ok': false, 'message': e.toString()};
       }
+    }
+    return data;
+  }
+
+
+  Future<Map<String, dynamic>> validateEmail (String token )async {
+    Map<String, dynamic> data = {};
+    try{
+      // ignore: unused_local_variable
+      final response = await http.post(
+        Uri.parse('$apiUrl/verify_email'),
+        body: {
+          'token': token
+        },
+      ).timeout(const Duration(seconds: 30));
+      if(response.statusCode == 201 ){
+        data = {
+          'ok': true,
+          'message': 'Usuario registrado',
+          'usuario': jsonDecode(response.body)
+        };
+      }
+    }catch(e){
+      if(e is Exception) { data = {'ok': false ,'message': e.toString()}; }
     }
     return data;
   }
